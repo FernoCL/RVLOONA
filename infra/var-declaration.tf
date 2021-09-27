@@ -1,0 +1,16 @@
+variable "project_id" { type = string}
+variable "region" { type = string}
+variable "zones" { type = list(string) }
+variable "mgmt-net" { type = string }
+variable "app-net" { type = string }
+variable "mgmt_cidr" { type = string }
+variable "app_cidr" { type = string }
+variable "control_cidr" { type = string }
+variable "etcd_cidr" { type = string }
+variable "nodes_cidr" { type = string }
+variable "mgmt_static" { type = string }
+variable "app_static" { type = string}
+variable "f5_name" { type = string }
+variable "f5_machine" { type = string }
+variable "f5_version" { type = string }
+variable "etcd_machine" { type = string }

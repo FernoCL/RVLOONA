@@ -14,3 +14,4 @@ variable "f5_name" { type = string }
 variable "f5_machine" { type = string }
 variable "f5_version" { type = string }
 variable "etcd_machine" { type = string }
+variable "control_machine" { type = string}

@@ -106,13 +106,25 @@ resource "google_compute_firewall" "f5-control-plane" {
   source_tags = ["f5-lb"]
 }
 
+resource "google_compute_firewall" "control-plane-f5" {
+  name        = "control-plane-f5"
+  network     = google_compute_network.app.id
+
+  allow {
+    protocol  = "tcp"
+    ports     = ["6443"]
+  }
+  target_tags = ["f5-lb"]
+  source_tags = ["control"]
+}
+
 resource "google_compute_firewall" "control-etcd" {
   name        = "control-etcd"
   network     = google_compute_network.app.id
 
   allow {
     protocol  = "tcp"
-    ports     = ["443"]
+    ports     = ["2379"]
   }
   target_tags = ["f5-lb"]
   source_tags = ["control"]
@@ -153,6 +165,13 @@ resource "google_dns_record_set" "etcd" {
   ttl          = 300
 }
 
+resource "google_dns_record_set" "control-plane" {
+  managed_zone = google_dns_managed_zone.rvloona-internal.name
+  name         = "control-plane.internal.rvloona.com."
+  type         = "A"
+  rrdatas      = [var.app_static]
+  ttl          = 300
+}
 
 #Deploying static IPs for F5
 resource "google_compute_address" "f5-mgmt-static-internal" {

@@ -27,6 +27,17 @@ f5_version = "f5-bigip-16-1-0-0-0-19-payg-good-25mbps-210623020944"
 
 #etcd Config
 etcd_machine = "n1-standard-1"
+etcd_ip = [
+  "10.1.4.2",
+  "10.1.4.3",
+  "10.1.4.4"
+]
 
 #control Config
 control_machine = "n1-standard-2"
+
+control_ip = [
+  "10.1.3.2",
+  "10.1.3.3",
+  "10.1.3.4"
+]

@@ -16,6 +16,7 @@ resource "google_compute_instance" "etcd-nodes" {
   network_interface {
     network = google_compute_network.app.id
     subnetwork = google_compute_subnetwork.etcd.id
+    network_ip = var.etcd_ip[count.index]
     access_config {
     }
   }

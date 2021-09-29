@@ -16,6 +16,7 @@ resource "google_compute_instance" "control-plane-nodes" {
   network_interface {
     network = google_compute_network.app.id
     subnetwork = google_compute_subnetwork.control-sub.id
+    network_ip = var.control_ip[count.index]
     access_config {
     }
   }

@@ -17,3 +17,5 @@ variable "etcd_machine" { type = string }
 variable "control_machine" { type = string }
 variable "etcd_ip" { type = list(string) }
 variable "control_ip" { type = list(string) }
+variable "node_machine" { type = string }
+variable "node_ip" { type = list(string) }

@@ -8,7 +8,7 @@ resource "google_compute_instance" "control-plane-nodes" {
   boot_disk {
     device_name = "boot"
     initialize_params {
-      image = "projects/${var.project_id}/global/images/control-plane"
+      image = "projects/${var.project_id}/global/images/base"
       type = "pd-ssd"
     }
   }

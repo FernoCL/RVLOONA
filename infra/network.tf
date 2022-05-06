@@ -146,7 +146,7 @@ resource "google_compute_firewall" "default" {
 
 resource "google_dns_managed_zone" "rvloona-internal" {
   name        = "rvloona-internal"
-  dns_name    = "internal.rvloona.com."
+  dns_name    = "rvloona.com."
 
   visibility = "private"
 
@@ -167,7 +167,7 @@ resource "google_dns_record_set" "etcd" {
 
 resource "google_dns_record_set" "control-plane" {
   managed_zone = google_dns_managed_zone.rvloona-internal.name
-  name         = "control-plane.internal.rvloona.com."
+  name         = "plane.internal.rvloona.com."
   type         = "A"
   rrdatas      = [var.app_static]
   ttl          = 300

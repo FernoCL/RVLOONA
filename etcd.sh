@@ -81,7 +81,7 @@ cat << EOF | sudo tee /etc/systemd/system/kubelet.service.d/20-etcd-service-mana
 [Service]
 ExecStart=
 #  Replace "systemd" with the cgroup driver of your container runtime. The default value in the kubelet is "cgroupfs".
-ExecStart=/usr/bin/kubelet --address=0.0.0.0 --pod-manifest-path=/etc/kubernetes/manifests --cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock
+ExecStart=/usr/bin/kubelet --address=0.0.0.0 --pod-manifest-path=/etc/kubernetes/manifests --cgroup-driver=systemd --container-runtime-endpoint=unix:///run/containerd/containerd.sock
 Restart=always
 EOF
 
@@ -91,9 +91,9 @@ sudo systemctl restart kubelet
 sudo systemctl status kubelet
 
 
-export HOST0=10.1.4.4
-export HOST1=10.1.4.2
-export HOST2=10.1.4.3
+export HOST0=10.1.4.2
+export HOST1=10.1.4.3
+export HOST2=10.1.4.4
 
 mkdir -p /tmp/${HOST0}/ /tmp/${HOST1}/ /tmp/${HOST2}/
 
@@ -110,6 +110,7 @@ etcd:
     local:
         serverCertSANs:
         - "${HOST}"
+        - "etcd.internal.rvloona.com"
         peerCertSANs:
         - "${HOST}"
         extraArgs:
@@ -150,21 +151,22 @@ sudo kubeadm init phase certs apiserver-etcd-client --config=/tmp/${HOST0}/kubea
 sudo find /tmp/${HOST2} -name ca.key -type f -delete
 sudo find /tmp/${HOST1} -name ca.key -type f -delete
 
+ssh-keygen -t ed25519
 
-scp -r /tmp/10.1.4.2/* etcd-1:
-scp -r /tmp/10.1.4.3/* etcd-2:
+scp -r /tmp/10.1.4.3/* etcd-1:
+scp -r /tmp/10.1.4.4/* etcd-2:
 
 sudo -Es
 chown -R root:root pki
 mv pki /etc/kubernetes/
 
-mkdir -p /tmp/10.1.4.2/
-mv kubeadmcfg.yaml /tmp/10.1.4.2/
-
 mkdir -p /tmp/10.1.4.3/
 mv kubeadmcfg.yaml /tmp/10.1.4.3/
 
+mkdir -p /tmp/10.1.4.4/
+mv kubeadmcfg.yaml /tmp/10.1.4.4/
 
-sudo kubeadm init phase etcd local --config=/tmp/10.1.4.4/kubeadmcfg.yaml
+
 sudo kubeadm init phase etcd local --config=/tmp/10.1.4.2/kubeadmcfg.yaml
 sudo kubeadm init phase etcd local --config=/tmp/10.1.4.3/kubeadmcfg.yaml
+sudo kubeadm init phase etcd local --config=/tmp/10.1.4.4/kubeadmcfg.yaml

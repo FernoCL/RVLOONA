@@ -58,76 +58,16 @@ resource "google_compute_subnetwork" "nodes" {
   network       = google_compute_network.app.id
 }
 
-resource "google_compute_firewall" "etcd-internal" {
-  name        = "etcd-internal"
+
+resource "google_compute_firewall" "internal-connectivity" {
+  name        = "internal"
   network     = google_compute_network.app.id
 
   allow {
     protocol  = "tcp"
-    ports     = ["2379", "2380", "2381"]
   }
-  target_tags = ["etcd"]
-  source_tags = ["etcd"]
-}
-
-resource "google_compute_firewall" "control-internal" {
-  name        = "control-internal"
-  network     = google_compute_network.app.id
-
-  allow {
-    protocol  = "tcp"
-    ports     = ["6443", "10250", "10257", "10259"]
-  }
-  target_tags = ["control"]
-  source_tags = ["control"]
-}
-
-resource "google_compute_firewall" "f5-etcd" {
-  name        = "f5-etcd"
-  network     = google_compute_network.app.id
-
-  allow {
-    protocol  = "tcp"
-    ports     = ["2379", "2381"]
-  }
-  target_tags = ["etcd"]
-  source_tags = ["f5-lb"]
-}
-
-resource "google_compute_firewall" "f5-control-plane" {
-  name        = "f5-control-plane"
-  network     = google_compute_network.app.id
-
-  allow {
-    protocol  = "tcp"
-    ports     = ["6443"]
-  }
-  target_tags = ["control"]
-  source_tags = ["f5-lb"]
-}
-
-resource "google_compute_firewall" "control-plane-f5" {
-  name        = "control-plane-f5"
-  network     = google_compute_network.app.id
-
-  allow {
-    protocol  = "tcp"
-    ports     = ["6443"]
-  }
-  target_tags = ["f5-lb"]
-  source_tags = ["control"]
-}
-
-resource "google_compute_firewall" "control-etcd" {
-  name        = "control-etcd"
-  network     = google_compute_network.app.id
-
-  allow {
-    protocol  = "tcp"
-    ports     = ["2379"]
-  }
-  target_tags = ["f5-lb"]
-  source_tags = ["control"]
+  target_tags = ["f5-lb","control","etcd","nodes"]
+  source_tags = ["f5-lb","control","etcd","nodes"]
 }
 
 #Temporary rule for config

@@ -110,7 +110,8 @@ etcd:
     local:
         serverCertSANs:
         - "${HOST}"
-        - "etcd.internal.rvloona.com"
+        - "etcd.rvloona.com"
+        - "10.1.2.2"
         peerCertSANs:
         - "${HOST}"
         extraArgs:
@@ -153,15 +154,23 @@ sudo find /tmp/${HOST1} -name ca.key -type f -delete
 
 ssh-keygen -t ed25519
 
+sudo chown -R fernando:fernando /tmp/10.1.4*
+
 scp -r /tmp/10.1.4.3/* etcd-1:
 scp -r /tmp/10.1.4.4/* etcd-2:
 
 sudo -Es
 chown -R root:root pki
 mv pki /etc/kubernetes/
+exit
 
 mkdir -p /tmp/10.1.4.3/
 mv kubeadmcfg.yaml /tmp/10.1.4.3/
+
+sudo -Es
+chown -R root:root pki
+mv pki /etc/kubernetes/
+exit
 
 mkdir -p /tmp/10.1.4.4/
 mv kubeadmcfg.yaml /tmp/10.1.4.4/

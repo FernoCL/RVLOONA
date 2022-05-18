@@ -66,8 +66,8 @@ resource "google_compute_firewall" "internal-connectivity" {
   allow {
     protocol  = "tcp"
   }
-  target_tags = ["f5-lb","control","etcd","nodes"]
-  source_tags = ["f5-lb","control","etcd","nodes"]
+  target_tags = ["f5-lb","control","etcd","node"]
+  source_tags = ["f5-lb","control","etcd","node"]
 }
 
 #Temporary rule for config
@@ -99,7 +99,7 @@ resource "google_dns_managed_zone" "rvloona-internal" {
 
 resource "google_dns_record_set" "etcd" {
   managed_zone = google_dns_managed_zone.rvloona-internal.name
-  name         = "etcd.internal.rvloona.com."
+  name         = "etcd.rvloona.com."
   type         = "A"
   rrdatas      = [var.app_static]
   ttl          = 300
@@ -107,7 +107,7 @@ resource "google_dns_record_set" "etcd" {
 
 resource "google_dns_record_set" "control-plane" {
   managed_zone = google_dns_managed_zone.rvloona-internal.name
-  name         = "plane.internal.rvloona.com."
+  name         = "plane.rvloona.com."
   type         = "A"
   rrdatas      = [var.app_static]
   ttl          = 300
@@ -140,4 +140,16 @@ resource "google_compute_address" "f5-app-static-external" {
   name          = "f5-app-external"
   address_type = "EXTERNAL"
   region = var.region
+}
+
+resource "google_compute_network_peering" "mgmt-app" {
+  name         = "mgmt-app"
+  network      = google_compute_network.app.id
+  peer_network = google_compute_network.mgmt.id
+}
+
+resource "google_compute_network_peering" "app-mgmt" {
+  name         = "app-mgmt"
+  network      = google_compute_network.mgmt.id
+  peer_network = google_compute_network.app.id
 }
